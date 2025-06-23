@@ -1,64 +1,52 @@
-const myLibrary = []
+const Library=[];
+let leido=''
+function Book(title,author,pages,read){
+    this.title=title;
+    this.author=author;
+    this.pages=pages;
+    this.read=read;
+    this.id=crypto.randomUUID()
 
-function Book(name, author, pages, status){
-    this.name = name;
-    this.author = author;
-    this.pages = pages;
-    this.status = status;
+    this.bookinfo= function(title,author,pages,read){
+        if (this.read){
+            leido="a été lu"
+        }
+        else{
+            leido="n'a pas été lu"
+        }
+        return `${this.title}, ecrit par ${this.author}, ${this.pages} pages, ${leido},`
+
+    }
 }
 
+const libro1 = new Book("Tokio Blues","Haruki Murakami",150,true)
+const libro2 = new Book("1984", "George Orwell",230, false )
 function addBookToLibrary(){
-    var name = document.getElementById('name').value;
-    var author = document.getElementById('author').value;
-    var pages = document.getElementById('pages').value;
-    var status = document.getElementById('status');
-    if(status.checked){
-        status = "read";
-    }
-    else{
-        status = "Not read";
-    }
-    if(name===""||author===""){
-        alert("error, fill every formulary");
-    }
-    else{
-        myLibrary.push(new Book(name, author, pages, status));
-    }
-    listBooks();
+    Library.push(libro1)
+    Library.push(libro2)
+
 }
+addBookToLibrary()
+console.log(Library[1].bookinfo())
 
-function deleteBook(index) {
-    myLibrary.splice(index, 1);
-    listBooks(); // Update the list after deleting a book
+const container = document.querySelector("#library")
+
+
+for (let i=0; i<2; i++){
+
+    const card= document.createElement("div")
+    card.classList.add('card')
+    container.appendChild(card)
+for (let key in Library[i]){
+    if (typeof Library[i][key] !== 'function' && Library[i][key]!==Library[i]['id']){
+        if (Library[i][key]==Library[i]['title']){
+            const title=document.createElement("h3")
+            title.textContent=Library[i].title
+            card.appendChild(title)
+        }
+        else{
+        const prop=document.createElement("p")
+        prop.textContent=`${key}: ${Library[i][key]}`
+        card.appendChild(prop)}}
 }
-
-function listBooks(){
-    const container = document.getElementById('bookContainer');
-    container.innerHTML = ''; // Clear previous content
-
-    for (let i = 0; i < myLibrary.length; i++) {
-        const card = document.createElement('div');
-        card.className = 'card';
-
-        card.innerHTML = `
-            <h3>${myLibrary[i].name}</h3>
-            <p>Author: ${myLibrary[i].author}</p>
-            <p>Pages: ${myLibrary[i].pages}</p>
-            <p>Status: ${myLibrary[i].status}</p>
-            <button class="deleteButton" data-index="${i}">Delete</button>
-        `;
-
-        container.appendChild(card);
-    }
-    const deleteButtons = document.querySelectorAll('.deleteButton');
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-            const index = e.target.getAttribute('data-index');
-            deleteBook(index);
-        });
-    });
 }
-
-document.getElementById('show').addEventListener('click', listBooks);
-
-document.getElementById('submit').addEventListener('click', addBookToLibrary);
