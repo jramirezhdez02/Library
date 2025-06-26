@@ -6,17 +6,6 @@ function Book(title,author,pages,read){
     this.pages=pages;
     this.read=read;
     this.id=crypto.randomUUID()
-
-    this.bookinfo= function(title,author,pages,read){
-        if (this.read){
-            leido="a été lu"
-        }
-        else{
-            leido="n'a pas été lu"
-        }
-        return `${this.title}, ecrit par ${this.author}, ${this.pages} pages, ${leido},`
-
-    }
 }
 
 /*const libro1 = new Book("Tokio Blues","Haruki Murakami",150,true)
@@ -32,7 +21,6 @@ const container = document.querySelector("#library")
 const add = document.querySelector("#add")
 add.textContent="+ Add Book"
 container.appendChild(add)
-
 
 
 function renderBooks(){
@@ -136,11 +124,30 @@ add.addEventListener("click", () => {
     formulario.appendChild(submit)
     submit.className='submit'
 
-    submit.addEventListener("click", ()=>{
+    submit.addEventListener("click", (e)=>{
+       e.preventDefault();
        let title=inputNombre.value
        let author=inputAuthor.value
        let pages=inputPages.value
        let read=Checkbox.checked
+
+       if (!title) {
+        alert("Por favor ingresa el título del libro");
+        inputNombre.focus();
+        return;
+    }
+    
+    if (!author) {
+        alert("Por favor ingresa el autor del libro");
+        inputAuthor.focus();
+        return;
+    }
+    
+     if (!pages) {
+        alert("Por favor ingresa el número de páginas");
+        inputPages.focus();
+        return;
+    }
 
        const libro = new Book(title,author,pages,read)
        addBookToLibrary(libro)
