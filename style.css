@@ -14,6 +14,39 @@
   border-radius: 10%;
   padding: 10px;
 }
-#title{
-  font-size: xx-large;
+#header{
+  display: flex;
+  flex-direction: column;
+}
+#add{
+  padding: 5px;
+  background-color: green;
+  color: white;
+  font-size: medium;
+}
+#nameform{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.nombre{
+  padding: 10px;
+  height: 20px;
+  width: 25%;
+  background-color: rgb(234, 234, 234);
+  border: 2px;
+  border-radius: 10px;
+}
+#read{
+  height: 25px;
+  width: 25px;
+  background-color: rgb(234, 234, 234);
+  border: 2px;
+}
+.submit{
+  background-color: green;
+  color: white;
+  font-size: medium;
+  width: 5%;
+  padding: 5px;
 }
