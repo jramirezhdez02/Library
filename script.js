@@ -1,3 +1,5 @@
+//Hacer que el boton del elimine el elemento del array, retocar detalles visuales y de flex
+
 const Library=[];
 let leido=''
 function Book(title,author,pages,read){
@@ -15,46 +17,137 @@ const libro3 = new Book("Le petit prince", "Antoine de Saint-Exupery", 120, true
 function addBookToLibrary(libro){
     Library.push(libro)
 }
+function crearToggle(status){
+        // Crear contenedor principal
+        const toggleContainer = document.createElement('div');
+        toggleContainer.style.margin = '20px';
+        toggleContainer.style.display = 'flex';
+        toggleContainer.style.alignItems = 'center';
+        toggleContainer.style.gap = '10px';
+        
+        // Crear el interruptor (toggle)
+        const toggleSwitch = document.createElement('div');
+        toggleSwitch.style.width = '60px';
+        toggleSwitch.style.height = '30px';
+        toggleSwitch.style.backgroundColor = '#ccc';
+        toggleSwitch.style.borderRadius = '15px';
+        toggleSwitch.style.position = 'relative';
+        toggleSwitch.style.cursor = 'pointer';
+        toggleSwitch.style.transition = 'background-color 0.3s';
+        
+        // Crear el círculo deslizante
+        const toggleSlider = document.createElement('div');
+        toggleSlider.style.width = '26px';
+        toggleSlider.style.height = '26px';
+        toggleSlider.style.backgroundColor = 'white';
+        toggleSlider.style.borderRadius = '50%';
+        toggleSlider.style.position = 'absolute';
+        toggleSlider.style.top = '2px';
+        toggleSlider.style.left = '2px';
+        toggleSlider.style.transition = 'transform 0.3s';
+        
+        // Crear etiqueta de texto
+        const toggleLabel = document.createElement('span');
+        toggleLabel.textContent = 'reading status';
+        toggleLabel.style.fontFamily = 'Arial, sans-serif';
+        
+        // Añadir elementos al DOM
+        toggleSwitch.appendChild(toggleSlider);
+        toggleContainer.appendChild(toggleSwitch);
+        toggleContainer.appendChild(toggleLabel);
+        card.appendChild(toggleContainer);
 
+
+  // Estado del toggle
+  let isOn
+  if (status===`read`){
+    isOn = true;
+  }
+  else{
+    isOn = false
+  }
+  
+  // Función para actualizar el estado visual
+  function updateToggle() {
+    if (isOn) {
+      toggleSwitch.style.backgroundColor = '#4CAF50';
+      toggleSlider.style.transform = 'translateX(30px)';
+      toggleLabel.textContent = 'read';
+    } else {
+      toggleSwitch.style.backgroundColor = '#ccc';
+      toggleSlider.style.transform = 'translateX(0)';
+      toggleLabel.textContent = 'not read';
+    }
+  }
+  
+  // Evento click
+  toggleSwitch.addEventListener('click', function() {
+    isOn = !isOn;
+    updateToggle();
+    
+    // Aquí puedes añadir la funcionalidad que quieras ejecutar
+    console.log('Toggle state:', isOn);
+  });
+  
+  // Inicializar
+  updateToggle();
+}
 
 const container = document.querySelector("#library")
 const add = document.querySelector("#add")
 add.textContent="+ Add Book"
 container.appendChild(add)
 
+function renderBooks() {
+    container.innerHTML = '';
+    container.appendChild(add);
 
-function renderBooks(){
-    container.innerHTML='';
-    container.appendChild(add)
+    for (let i = 0; i < Library.length; i++) {
+        const card = document.createElement("div");
+        card.classList.add('card');
+        container.appendChild(card);
 
-    for (let i=0; i<Library.length; i++){
+        for (let key in Library[i]) {
+            if (typeof Library[i][key] !== 'function' && key !== 'id') { 
+                if (key === 'title') {
+                    const title = document.createElement("h3");
+                    title.textContent = Library[i].title;
+                    card.appendChild(title);}
+                else if(key === 'read'){
 
-        const card= document.createElement("div")
-        card.classList.add('card')
-        container.appendChild(card)
-    for (let key in Library[i]){
-        if (typeof Library[i][key] !== 'function' && Library[i][key]!==Library[i]['id']){
-            if (Library[i][key]==Library[i]['title']){
-                const title=document.createElement("h3")
-                const del=document.createElement("button")
-                del.textContent="Delete"
-                del.addEventListener("click",()=>{
-                    card.remove()
-                })
-                title.textContent=Library[i].title
-                card.appendChild(title)
-                card.appendChild(del)
+                    if(Library[i][key]){
+                        const prop=document.createElement("p");
+                        prop.textContent = `read`;
+                        crearToggle(`read`)
+                        
+                    }
+                    else{
+                        const prop=document.createElement("p");
+                        prop.textContent = `not read`;
+                        crearToggle(`not read`)
+                        
+                    }
+                }
+                else{
+                    const prop = document.createElement("p");
+                    prop.textContent = `${key}: ${Library[i][key]}`;
+                    card.appendChild(prop);
+                }
             }
-            else{
-            const prop=document.createElement("p")
-            prop.textContent=`${key}: ${Library[i][key]}`
-            card.appendChild(prop)}}
+        }
+
+        const del = document.createElement("button");
+        del.textContent = "Delete";
+        del.addEventListener("click", () => {
+            card.remove()            
+        });
+        card.appendChild(del);
     }
-    }   
-
 }
-
 add.addEventListener("click", () => {
+
+    console.log(Library.length)
+    console.table(Library); // Muestra una tabla ordenada en la consola
 
     //Create Form
     const formulario=document.createElement('form')
@@ -98,6 +191,7 @@ add.addEventListener("click", () => {
     inputPages.name = 'pages';
     inputPages.placeholder = 'Pages';
     inputPages.className='nombre'
+    inputPages.min = '1';
 
     const labelPages = document.createElement('label');
     labelPages.htmlFor = 'pages';
@@ -130,6 +224,7 @@ add.addEventListener("click", () => {
        let author=inputAuthor.value
        let pages=inputPages.value
        let read=Checkbox.checked
+
 
        if (!title) {
         alert("Por favor ingresa el título del libro");
