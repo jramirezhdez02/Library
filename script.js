@@ -17,80 +17,79 @@ const libro3 = new Book("Le petit prince", "Antoine de Saint-Exupery", 120, true
 function addBookToLibrary(libro){
     Library.push(libro)
 }
-function crearToggle(status){
-        // Crear contenedor principal
-        const toggleContainer = document.createElement('div');
-        toggleContainer.style.margin = '20px';
-        toggleContainer.style.display = 'flex';
-        toggleContainer.style.alignItems = 'center';
-        toggleContainer.style.gap = '10px';
-        
-        // Crear el interruptor (toggle)
-        const toggleSwitch = document.createElement('div');
-        toggleSwitch.style.width = '60px';
-        toggleSwitch.style.height = '30px';
-        toggleSwitch.style.backgroundColor = '#ccc';
-        toggleSwitch.style.borderRadius = '15px';
-        toggleSwitch.style.position = 'relative';
-        toggleSwitch.style.cursor = 'pointer';
-        toggleSwitch.style.transition = 'background-color 0.3s';
-        
-        // Crear el círculo deslizante
-        const toggleSlider = document.createElement('div');
-        toggleSlider.style.width = '26px';
-        toggleSlider.style.height = '26px';
-        toggleSlider.style.backgroundColor = 'white';
-        toggleSlider.style.borderRadius = '50%';
-        toggleSlider.style.position = 'absolute';
-        toggleSlider.style.top = '2px';
-        toggleSlider.style.left = '2px';
-        toggleSlider.style.transition = 'transform 0.3s';
-        
-        // Crear etiqueta de texto
-        const toggleLabel = document.createElement('span');
-        toggleLabel.textContent = 'reading status';
-        toggleLabel.style.fontFamily = 'Arial, sans-serif';
-        
-        // Añadir elementos al DOM
-        toggleSwitch.appendChild(toggleSlider);
-        toggleContainer.appendChild(toggleSwitch);
-        toggleContainer.appendChild(toggleLabel);
-        card.appendChild(toggleContainer);
+function crearToggle(status,bookId) {
+    // Crear contenedor principal
+    const toggleContainer = document.createElement('div');
+    toggleContainer.style.margin = '20px';
+    toggleContainer.style.display = 'flex';
+    toggleContainer.style.alignItems = 'center';
+    toggleContainer.style.gap = '10px';
+    
+    // Crear el interruptor (toggle)
+    const toggleSwitch = document.createElement('div');
+    toggleSwitch.style.width = '60px';
+    toggleSwitch.style.height = '30px';
+    toggleSwitch.style.backgroundColor = '#ccc';
+    toggleSwitch.style.borderRadius = '15px';
+    toggleSwitch.style.position = 'relative';
+    toggleSwitch.style.cursor = 'pointer';
+    toggleSwitch.style.transition = 'background-color 0.3s';
+    
+    // Crear el círculo deslizante
+    const toggleSlider = document.createElement('div');
+    toggleSlider.style.width = '26px';
+    toggleSlider.style.height = '26px';
+    toggleSlider.style.backgroundColor = 'white';
+    toggleSlider.style.borderRadius = '50%';
+    toggleSlider.style.position = 'absolute';
+    toggleSlider.style.top = '2px';
+    toggleSlider.style.left = '2px';
+    toggleSlider.style.transition = 'transform 0.3s';
+    
+    // Crear etiqueta de texto
+    const toggleLabel = document.createElement('span');
+    toggleLabel.textContent = 'reading status';
+    toggleLabel.style.fontFamily = 'Arial, sans-serif';
+    
+    // Añadir elementos al contenedor
+    toggleSwitch.appendChild(toggleSlider);
+    toggleContainer.appendChild(toggleSwitch);
+    toggleContainer.appendChild(toggleLabel);
 
-
-  // Estado del toggle
-  let isOn
-  if (status===`read`){
-    isOn = true;
-  }
-  else{
-    isOn = false
-  }
-  
-  // Función para actualizar el estado visual
-  function updateToggle() {
-    if (isOn) {
-      toggleSwitch.style.backgroundColor = '#4CAF50';
-      toggleSlider.style.transform = 'translateX(30px)';
-      toggleLabel.textContent = 'read';
-    } else {
-      toggleSwitch.style.backgroundColor = '#ccc';
-      toggleSlider.style.transform = 'translateX(0)';
-      toggleLabel.textContent = 'not read';
+    // Estado del toggle
+    let isOn = status === 'read';
+    
+    // Función para actualizar el estado visual
+    function updateToggle() {
+        if (isOn) {
+            toggleSwitch.style.backgroundColor = '#4CAF50';
+            toggleSlider.style.transform = 'translateX(30px)';
+            toggleLabel.textContent = 'read';
+        } else {
+            toggleSwitch.style.backgroundColor = '#ccc';
+            toggleSlider.style.transform = 'translateX(0)';
+            toggleLabel.textContent = 'not read';
+        }
     }
-  }
-  
-  // Evento click
-  toggleSwitch.addEventListener('click', function() {
-    isOn = !isOn;
+    
+    // Evento click
+    toggleSwitch.addEventListener('click', function() {
+        isOn = !isOn;
+        updateToggle();
+
+        // Actualizar el estado en el libro correspondiente
+        const bookIndex = Library.findIndex(book => book.id === bookId);
+        if (bookIndex !== -1) {
+            Library[bookIndex].read = isOn;
+        }
+
+        console.log('Toggle state:', isOn);
+    });
+    
+    // Inicializar
     updateToggle();
     
-    // Aquí puedes añadir la funcionalidad que quieras ejecutar
-    console.log('Toggle state:', isOn);
-  });
-  
-  // Inicializar
-  updateToggle();
+    return toggleContainer; // Devuelve el contenedor en lugar de añadirlo al body
 }
 
 const container = document.querySelector("#library")
@@ -115,18 +114,12 @@ function renderBooks() {
                     card.appendChild(title);}
                 else if(key === 'read'){
 
-                    if(Library[i][key]){
-                        const prop=document.createElement("p");
-                        prop.textContent = `read`;
-                        crearToggle(`read`)
-                        
-                    }
-                    else{
-                        const prop=document.createElement("p");
-                        prop.textContent = `not read`;
-                        crearToggle(`not read`)
-                        
-                    }
+                    const toggle = crearToggle(
+                        Library[i][key] ? 'read' : 'not read',
+                        Library[i].id );
+                    
+                    
+                    card.appendChild(toggle);
                 }
                 else{
                     const prop = document.createElement("p");
@@ -139,7 +132,17 @@ function renderBooks() {
         const del = document.createElement("button");
         del.textContent = "Delete";
         del.addEventListener("click", () => {
-            card.remove()            
+
+            const bookId = Library[i].id;
+            const bookIndex = Library.findIndex(book => book.id === bookId);
+            
+            if (bookIndex !== -1) {
+                Library.splice(bookIndex, 1);
+            }
+            
+            card.remove();
+            console.table(Library)
+            
         });
         card.appendChild(del);
     }
@@ -147,7 +150,6 @@ function renderBooks() {
 add.addEventListener("click", () => {
 
     console.log(Library.length)
-    console.table(Library); // Muestra una tabla ordenada en la consola
 
     //Create Form
     const formulario=document.createElement('form')
@@ -225,7 +227,6 @@ add.addEventListener("click", () => {
        let pages=inputPages.value
        let read=Checkbox.checked
 
-
        if (!title) {
         alert("Por favor ingresa el título del libro");
         inputNombre.focus();
@@ -247,7 +248,8 @@ add.addEventListener("click", () => {
        const libro = new Book(title,author,pages,read)
        addBookToLibrary(libro)
        formulario.remove()
-        renderBooks();
+       console.table(Library)
+       renderBooks();
     })
 
   });
