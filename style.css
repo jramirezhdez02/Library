@@ -1,7 +1,9 @@
+body{
+  margin-left: 40px;
+}
 #library{
   display: flex;
   align-items: center;
-  flex-direction: row;
   gap: 10px;
 }
 .card{
@@ -49,7 +51,4 @@
   font-size: medium;
   width: 5%;
   padding: 5px;
-}
-.del{
-  margin-left:100% ;
 }

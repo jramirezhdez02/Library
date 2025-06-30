@@ -142,7 +142,7 @@ function renderBooks() {
             
             card.remove();
             console.table(Library)
-            
+
         });
         card.appendChild(del);
     }
@@ -151,6 +151,8 @@ add.addEventListener("click", () => {
 
     console.log(Library.length)
 
+
+    
     //Create Form
     const formulario=document.createElement('form')
     formulario.id='nameform'
